@@ -34,15 +34,26 @@ export default function ContactForm() {
     try {
       const response = await fetch(WEB3FORMS_URL, {
         method: 'POST',
+        headers: {
+          Accept: 'application/json'
+        },
         body: formData
       });
 
-      const data = await response.json();
-      if (data.success) {
-        setResult('Form submitted successfully');
+      const data = await response.json().catch(() => null);
+
+      const wasSuccess = data?.success ?? response.ok;
+
+      if (!response.ok) {
+        setResult(data?.message ?? `Error sending message (status ${response.status})`);
+        return;
+      }
+
+      if (wasSuccess) {
+        setResult(data?.message ?? 'Form submitted successfully');
         e.currentTarget.reset();
       } else {
-        setResult('Error sending message');
+        setResult(data?.message ?? 'Error sending message');
       }
     } catch (error) {
       console.error('Web3Forms submission error', error);
