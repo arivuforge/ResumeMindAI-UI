@@ -34,11 +34,20 @@ export default function HeroSection() {
             className="w-full sm:w-auto px-10 py-4 bg-primary hover:bg-violet-600 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-3 border-2 border-emerald-300/70 hover:border-emerald-200"
             href="/auth/login"
           >
-            <img
-              alt="Google"
-              className="w-5 h-5 bg-white rounded-full p-0.5"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuHcfGVdHqQACSrj3Kns-trJ5kFKFNhkeNEJaem6hO_x2kdvVvlXYPC2cdktL21ryFoXqC5DK7kUnX1CeRIEOQ3vKjNkFlBH9oh--iU9LoftZUt-eOM7fGj9pw5eABimgtwp2ueCb14gia3_9dNRP1JAmjO7F8V5DN_m60sOGkxtrAW6PFjlx9COT8c6Ek37JQFn8kT2B5bKdid4A781ZgRO0Hs5_wRtZrtIhC60C09Zn93br7Qwu1SvMJORsRQgj0aivElq2paxjG"
-            />
+            <span className="relative flex h-5 w-5 items-center justify-center rounded-full bg-linear-to-br from-emerald-300 to-teal-500 shadow-[0_0_0_4px_rgba(16,185,129,0.18)]">
+              <svg
+                aria-hidden="true"
+                className="h-3.5 w-3.5 text-slate-900 drop-shadow-sm"
+                fill="none"
+                stroke="currentColor"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth="2.2"
+                viewBox="0 0 24 24"
+              >
+                <path d="M5 13l4 4L19 7" />
+              </svg>
+            </span>
             Get Started for Free
           </Link>
           <a

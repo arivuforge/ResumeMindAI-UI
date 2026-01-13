@@ -17,11 +17,19 @@ export default function GetStartedSection() {
             className="flex items-center justify-center gap-4 bg-white hover:bg-slate-100 text-slate-900 px-8 py-4 rounded-xl font-bold transition-all transform hover:scale-[1.02] shadow-xl"
             href="/auth/login"
           >
-            <img
-              alt="Google"
-              className="w-6 h-6"
-              src="https://lh3.googleusercontent.com/aida-public/AB6AXuAVmYJqhC04XtW8NbN65Sg6uaHAQUtptJoqImICjr2c3IzhyGWHvkUHHHHHXWcZvyjVfqKUHmnDqtzkD-_Lw9jmQpX-9V9TXllla0aXXFH9TENKHQH6QipDDl1foxureCcU3Fx_T3SG8I4J8HIjXABfKAxv-4BsQCpjAQ4j4Htkl1ZbQJ8RpMUsfoaB3X6LOYFeDGsquaIAyT5igrE1S751_oRvfI2K_z5e9HVE2s75PXyV0TyhKQ8FRfy7xnF71L9NWHucW2ONQCjT"
-            />
+            <span className="relative flex h-7 w-7 items-center justify-center rounded-full bg-white shadow-[0_4px_12px_rgba(0,0,0,0.08)] ring-1 ring-slate-200">
+              <svg
+                aria-hidden="true"
+                className="h-4.5 w-4.5"
+                viewBox="0 0 24 24"
+                fill="none"
+              >
+                <path d="M21.35 12.22c0-.64-.06-1.25-.18-1.84H12v3.48h5.24a4.48 4.48 0 0 1-1.94 2.94v2.44h3.14c1.84-1.7 2.91-4.2 2.91-7.02Z" fill="#4285F4" />
+                <path d="M12 22c2.7 0 4.96-.9 6.61-2.45l-3.14-2.44c-.87.58-1.99.93-3.47.93-2.66 0-4.92-1.8-5.72-4.22H3.06v2.55A9.99 9.99 0 0 0 12 22Z" fill="#34A853" />
+                <path d="M6.28 13.82A5.99 5.99 0 0 1 6 12c0-.63.11-1.24.28-1.82V7.63H3.06A9.99 9.99 0 0 0 2 12c0 1.6.38 3.1 1.06 4.37l3.22-2.55Z" fill="#FBBC04" />
+                <path d="M12 6.98c1.47 0 2.78.51 3.81 1.51l2.86-2.86C16.95 3.94 14.69 3 12 3 8.06 3 4.66 5.34 3.06 8.63l3.22 2.55c.8-2.42 3.06-4.2 5.72-4.2Z" fill="#EA4335" />
+              </svg>
+            </span>
             Continue with Google
           </Link>
           <p className="mt-6 text-slate-500 text-sm">No credit card required. Get 5 free resume scans monthly.</p>
