@@ -26,6 +26,9 @@ export default function Navbar() {
             <a className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#insights">
               Insights
             </a>
+            <Link className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="/contact">
+              Contact
+            </Link>
             <Link
               className="bg-primary hover:bg-violet-600 text-white px-6 py-2.5 rounded-full text-sm font-semibold transition-all shadow-lg shadow-primary/25"
               href="/auth/login"

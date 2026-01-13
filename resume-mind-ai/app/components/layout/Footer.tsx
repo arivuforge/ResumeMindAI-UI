@@ -1,3 +1,5 @@
+import Link from 'next/link';
+
 export default function Footer() {
   return (
     <footer className="bg-background-dark border-t border-slate-800/50 py-12">
@@ -23,6 +25,9 @@ export default function Footer() {
           <a className="hover:text-primary transition-colors" href="#">
             Documentation
           </a>
+          <Link className="hover:text-primary transition-colors" href="/contact">
+            Contact Us
+          </Link>
           <a
             className="hover:text-primary transition-colors flex items-center gap-1"
             href="https://github.com/Shrijeeth/ResumeMindAI-CLI"
