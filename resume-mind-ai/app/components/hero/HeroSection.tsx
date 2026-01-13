@@ -1,3 +1,4 @@
+import Link from 'next/link';
 import DashboardMockup from './DashboardMockup';
 
 export default function HeroSection() {
@@ -29,9 +30,9 @@ export default function HeroSection() {
 
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row justify-center items-center gap-5 mb-20">
-          <a
+          <Link
             className="w-full sm:w-auto px-10 py-4 bg-primary hover:bg-violet-600 text-white font-bold rounded-2xl shadow-xl shadow-primary/30 transition-all flex items-center justify-center gap-3 border-2 border-emerald-300/70 hover:border-emerald-200"
-            href="#google-login"
+            href="/auth/login"
           >
             <img
               alt="Google"
@@ -39,7 +40,7 @@ export default function HeroSection() {
               src="https://lh3.googleusercontent.com/aida-public/AB6AXuDuHcfGVdHqQACSrj3Kns-trJ5kFKFNhkeNEJaem6hO_x2kdvVvlXYPC2cdktL21ryFoXqC5DK7kUnX1CeRIEOQ3vKjNkFlBH9oh--iU9LoftZUt-eOM7fGj9pw5eABimgtwp2ueCb14gia3_9dNRP1JAmjO7F8V5DN_m60sOGkxtrAW6PFjlx9COT8c6Ek37JQFn8kT2B5bKdid4A781ZgRO0Hs5_wRtZrtIhC60C09Zn93br7Qwu1SvMJORsRQgj0aivElq2paxjG"
             />
             Get Started for Free
-          </a>
+          </Link>
           <a
             className="w-full sm:w-auto px-10 py-4 glass-card text-white font-semibold rounded-2xl hover:bg-slate-800 transition-all border border-slate-700/50 flex items-center justify-center gap-2"
             href="#demo"

@@ -35,3 +35,15 @@ body {
   color: #e2e8f0;
   font-family: Arial, Helvetica, sans-serif;
 }
+
+.glow-line {
+  stroke: #6366f1;
+  stroke-opacity: 0.2;
+  filter: drop-shadow(0 0 2px rgba(99, 102, 241, 0.5));
+}
+
+.glow-node {
+  fill: #6366f1;
+  fill-opacity: 0.4;
+  filter: drop-shadow(0 0 4px rgba(99, 102, 241, 0.8));
+}
