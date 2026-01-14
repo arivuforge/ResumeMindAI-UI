@@ -17,15 +17,15 @@ export default function Navbar() {
 
           {/* Navigation Links */}
           <div className="hidden md:flex items-center space-x-8">
-            <a className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#features">
+            <Link className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="/#features">
               Features
-            </a>
-            <a className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#how-it-works">
+            </Link>
+            <Link className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="/#how-it-works">
               How it Works
-            </a>
-            <a className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="#insights">
+            </Link>
+            <Link className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="/#insights">
               Insights
-            </a>
+            </Link>
             <Link className="text-sm font-medium text-slate-400 hover:text-white transition-colors" href="/contact">
               Contact
             </Link>
