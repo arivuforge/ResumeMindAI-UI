@@ -1,5 +1,6 @@
 'use client';
 
+import { useEffect, useMemo, useState } from 'react';
 import { User } from '@supabase/supabase-js';
 import { useRouter } from 'next/navigation';
 import { createClient } from '@/app/lib/supabase/client';
@@ -9,9 +10,20 @@ import PipelineStatusCard from '@/app/components/dashboard/cards/PipelineStatusC
 import RecentAnalysesList from '@/app/components/dashboard/lists/RecentAnalysesList';
 import KnowledgeGraphCard from '@/app/components/dashboard/cards/KnowledgeGraphCard';
 import InsightCard from '@/app/components/dashboard/cards/InsightCard';
+import { apiFetch, ApiError } from '@/app/lib/api';
 
 interface DashboardContentProps {
   user: User;
+}
+
+type ProviderStatus = 'connected' | 'inactive' | 'error';
+
+interface ProviderApi {
+  id: string;
+  provider_type: string;
+  display_name?: string;
+  name?: string;
+  status: ProviderStatus;
 }
 
 // Empty state insights - shown when no data is available
@@ -64,6 +76,7 @@ const emptyInsights = [
 
 export default function DashboardContent({ user }: DashboardContentProps) {
   const router = useRouter();
+  const [providers, setProviders] = useState<ProviderApi[]>([]);
 
   const handleSignOut = async () => {
     const supabase = createClient();
@@ -86,14 +99,53 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     router.push('/dashboard/graph');
   };
 
+  useEffect(() => {
+    const loadProviders = async () => {
+      try {
+        const data = await apiFetch<ProviderApi[]>('/settings/llm-providers/');
+        setProviders(data || []);
+      } catch (err) {
+        const e = err as ApiError;
+        console.error('Failed to load providers', e?.message);
+        setProviders([]);
+      }
+    };
+
+    loadProviders();
+  }, []);
+
+  const primaryProvider = useMemo(() => {
+    if (!providers.length) return null;
+    const connected = providers.find((p) => p.status === 'connected');
+    if (connected) return connected;
+    const withStatus = providers.find((p) => p.status !== undefined);
+    return withStatus || providers[0];
+  }, [providers]);
+
+  const pipelineStatus = useMemo(() => {
+    if (!primaryProvider) return 'not_configured' as const;
+    if (primaryProvider.status === 'connected') return 'active' as const;
+    if (primaryProvider.status === 'inactive') return 'idle' as const;
+    if (primaryProvider.status === 'error') return 'idle' as const;
+    return 'idle' as const;
+  }, [primaryProvider]);
+
+  const pipelineProviderName = useMemo(() => {
+    if (!primaryProvider) return null;
+    return primaryProvider.display_name || primaryProvider.name || primaryProvider.provider_type;
+  }, [primaryProvider]);
+
   return (
     <DashboardLayout user={user} pageTitle="Dashboard Overview" onSignOut={handleSignOut}>
       <div className="max-w-7xl mx-auto space-y-6">
         {/* Row 1: Upload + Pipeline Status */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           <UploadCard onFileSelect={handleFileSelect} />
-          {/* Empty state - no LLM provider configured */}
-          <PipelineStatusCard />
+          <PipelineStatusCard
+            status={pipelineStatus}
+            llmProvider={pipelineProviderName}
+            stats={null}
+          />
         </div>
 
         {/* Row 2: Recent Analyses + Knowledge Graph */}
