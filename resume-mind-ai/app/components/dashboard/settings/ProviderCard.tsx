@@ -14,6 +14,8 @@ interface ProviderCardProps {
   onEdit: (id: string) => void;
   onDelete: (id: string) => void;
   onRetry?: (id: string) => void;
+  onTest?: (id: string) => void;
+  isTesting?: boolean;
 }
 
 const statusConfig = {
@@ -52,9 +54,12 @@ export default function ProviderCard({
   onEdit,
   onDelete,
   onRetry,
+  onTest,
+  isTesting = false,
 }: ProviderCardProps) {
   const config = statusConfig[status];
-  const latencyPercentage = latency ? Math.min(100, Math.max(5, 100 - latency / 5)) : 0;
+  const hasLatency = latency !== undefined && latency !== null;
+  const latencyPercentage = hasLatency ? Math.min(100, Math.max(5, 100 - latency / 5)) : 0;
 
   return (
     <div
@@ -88,11 +93,11 @@ export default function ProviderCard({
         <div className="flex justify-between text-xs">
           <span className="text-slate-500">Latency</span>
           <span className={status === 'error' ? 'text-red-400' : 'text-slate-300'}>
-            {status === 'error' ? errorMessage || 'Timeout' : latency ? `${latency}ms` : '--'}
+            {status === 'error' ? errorMessage || 'Timeout' : hasLatency ? `${latency}ms` : '--'}
           </span>
         </div>
         <div className="w-full bg-slate-800 rounded-full h-1">
-          {status !== 'inactive' && (
+          {status !== 'inactive' && hasLatency && (
             <div
               className={`${config.barColor} h-1 rounded-full transition-all duration-300 ${
                 status === 'connected' ? 'shadow-[0_0_8px_rgba(16,185,129,0.5)]' : ''
@@ -104,11 +109,25 @@ export default function ProviderCard({
       </div>
 
       <div className="mt-4 pt-4 border-t border-slate-800 flex justify-end gap-2 opacity-60 group-hover:opacity-100 transition-opacity">
+        {onTest && (
+          <button
+            onClick={() => onTest(id)}
+            disabled={isTesting}
+            className="p-1.5 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
+            title="Test connection"
+          >
+            {isTesting ? (
+              <span className="w-4 h-4 border border-emerald-400 border-t-transparent rounded-full animate-spin inline-block"></span>
+            ) : (
+              <span className="material-symbols-outlined text-lg">bolt</span>
+            )}
+          </button>
+        )}
         {status === 'error' && onRetry && (
           <button
             onClick={() => onRetry(id)}
             className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
-            title="Retry"
+            title="Retry test"
           >
             <span className="material-symbols-outlined text-lg">refresh</span>
           </button>
@@ -116,14 +135,14 @@ export default function ProviderCard({
         <button
           onClick={() => onEdit(id)}
           className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
-          title="Edit"
+          title="Edit connection"
         >
           <span className="material-symbols-outlined text-lg">edit</span>
         </button>
         <button
           onClick={() => onDelete(id)}
           className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-          title="Delete"
+          title="Delete connection"
         >
           <span className="material-symbols-outlined text-lg">delete</span>
         </button>

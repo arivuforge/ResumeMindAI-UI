@@ -9,6 +9,7 @@ export type ProviderType =
   | 'azure-openai'
   | 'ollama'
   | 'huggingface'
+  | 'groq'
   | 'custom';
 
 export interface ProviderFormData {
@@ -23,61 +24,35 @@ interface ConfigureProviderFormProps {
   initialData?: Partial<ProviderFormData>;
   onSave: (data: ProviderFormData) => void;
   onCancel: () => void;
-  onTestConnection?: (data: ProviderFormData) => Promise<boolean>;
+  isSaving?: boolean;
+  providerOptions: { value: ProviderType; label: string; logoInitials?: string; logoColorClass?: string }[];
 }
-
-const providerOptions: { value: ProviderType; label: string }[] = [
-  { value: 'openai', label: 'OpenAI' },
-  { value: 'anthropic', label: 'Anthropic' },
-  { value: 'google-gemini', label: 'Google Gemini' },
-  { value: 'azure-openai', label: 'Azure OpenAI' },
-  { value: 'ollama', label: 'Ollama' },
-  { value: 'huggingface', label: 'Hugging Face' },
-  { value: 'custom', label: 'Custom (Generic)' },
-];
 
 export default function ConfigureProviderForm({
   mode,
   initialData,
   onSave,
   onCancel,
-  onTestConnection,
+  isSaving = false,
+  providerOptions,
 }: ConfigureProviderFormProps) {
+  const defaultProvider = initialData?.providerType || providerOptions[0]?.value || 'openai';
   const [formData, setFormData] = useState<ProviderFormData>({
-    providerType: initialData?.providerType || 'openai',
+    providerType: defaultProvider,
     modelName: initialData?.modelName || '',
     baseUrl: initialData?.baseUrl || '',
     apiKey: initialData?.apiKey || '',
   });
 
   const [showApiKey, setShowApiKey] = useState(false);
-  const [isTesting, setIsTesting] = useState(false);
-  const [testResult, setTestResult] = useState<'success' | 'error' | null>(null);
 
   const handleChange = (field: keyof ProviderFormData, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
-    setTestResult(null);
   };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     onSave(formData);
-  };
-
-  const handleTestConnection = async () => {
-    if (!onTestConnection) return;
-
-    setIsTesting(true);
-    setTestResult(null);
-
-    try {
-      const success = await onTestConnection(formData);
-      setTestResult(success ? 'success' : 'error');
-    } catch {
-      setTestResult('error');
-    } finally {
-      setIsTesting(false);
-    }
   };
 
   return (
@@ -177,55 +152,24 @@ export default function ConfigureProviderForm({
             </p>
           </div>
 
-          {testResult && (
-            <div className="col-span-1 md:col-span-2">
-              <div
-                className={`flex items-center gap-2 p-3 rounded-lg ${
-                  testResult === 'success'
-                    ? 'bg-emerald-500/10 border border-emerald-500/20 text-emerald-400'
-                    : 'bg-red-500/10 border border-red-500/20 text-red-400'
-                }`}
-              >
-                <span className="material-symbols-outlined text-lg">
-                  {testResult === 'success' ? 'check_circle' : 'error'}
-                </span>
-                <span className="text-sm">
-                  {testResult === 'success'
-                    ? 'Connection successful!'
-                    : 'Connection failed. Please check your credentials.'}
-                </span>
-              </div>
-            </div>
-          )}
         </div>
 
-        <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-700/50 flex justify-between items-center">
+        <div className="px-6 py-4 bg-slate-900/50 border-t border-slate-700/50 flex justify-end items-center gap-3">
           <button
             type="button"
-            onClick={handleTestConnection}
-            disabled={isTesting || !formData.apiKey}
-            className="text-xs text-primary hover:text-primary/80 font-medium disabled:text-slate-600 disabled:cursor-not-allowed flex items-center gap-1"
+            onClick={onCancel}
+            disabled={isSaving}
+            className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {isTesting && (
-              <span className="w-3 h-3 border border-primary border-t-transparent rounded-full animate-spin"></span>
-            )}
-            Test Connection
+            Cancel
           </button>
-          <div className="flex gap-3">
-            <button
-              type="button"
-              onClick={onCancel}
-              className="px-4 py-2 text-sm font-medium text-slate-400 hover:text-white transition-colors"
-            >
-              Cancel
-            </button>
-            <button
-              type="submit"
-              className="px-4 py-2 bg-primary hover:bg-violet-600 text-white text-sm font-medium rounded-lg shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all"
-            >
-              Save Configuration
-            </button>
-          </div>
+          <button
+            type="submit"
+            disabled={isSaving}
+            className="px-4 py-2 bg-primary hover:bg-violet-600 text-white text-sm font-medium rounded-lg shadow-[0_0_15px_rgba(139,92,246,0.2)] transition-all disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {isSaving ? 'Saving...' : 'Save Configuration'}
+          </button>
         </div>
       </form>
     </div>
