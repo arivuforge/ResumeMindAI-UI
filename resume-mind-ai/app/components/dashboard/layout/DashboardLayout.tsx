@@ -1,7 +1,7 @@
 'use client';
 
 import { User } from '@supabase/supabase-js';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Sidebar from './Sidebar';
 import DashboardHeader from './DashboardHeader';
 
@@ -19,6 +19,18 @@ export default function DashboardLayout({
   onSignOut,
 }: DashboardLayoutProps) {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+
+  // Lock body scroll while the mobile menu is open
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = 'hidden';
+    } else {
+      document.body.style.overflow = '';
+    }
+    return () => {
+      document.body.style.overflow = '';
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <div className="flex h-screen overflow-hidden bg-background-dark">
@@ -58,7 +70,12 @@ export default function DashboardLayout({
             </button>
           </div>
           {/* Reuse sidebar content structure */}
-          <Sidebar user={user} onSignOut={onSignOut} />
+          <Sidebar
+            user={user}
+            onSignOut={onSignOut}
+            variant="mobile"
+            onNavigate={() => setMobileMenuOpen(false)}
+          />
         </div>
       </div>
 
