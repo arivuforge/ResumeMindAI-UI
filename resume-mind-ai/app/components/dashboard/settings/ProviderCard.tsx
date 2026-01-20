@@ -73,153 +73,164 @@ export default function ProviderCard({
 
   return (
     <div
-      className={`group relative glass-card rounded-xl p-5 transition-all duration-300 ${
+      className={`group relative glass-card rounded-2xl p-6 transition-all duration-300 border border-slate-700/50 ${
         status === "error"
           ? "hover:border-red-500/30"
           : "hover:border-primary/50"
-      } ${isActive ? "border-primary/60 shadow-[0_0_20px_rgba(139,92,246,0.35)]" : ""}`}
+      } ${isActive ? "border-primary-light bg-primary/5 ring-1 ring-primary-light shadow-[0_0_25px_rgba(139,92,246,0.15)]" : "bg-slate-900/40 hover:bg-slate-900/60"}`}
     >
-      <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3 min-w-0">
+      <div className="flex justify-between items-start">
+        <div className="flex items-center gap-4 min-w-0">
           <div
-            className={`w-10 h-10 rounded-lg ${logoColorClass} flex items-center justify-center border border-current/20`}
+            className={`w-12 h-12 rounded-xl ${logoColorClass} flex items-center justify-center border border-white/5 shadow-inner transition-transform group-hover:scale-105 duration-300`}
           >
-            <span className="font-bold text-sm tracking-tighter">
+            <span className="font-extrabold text-base tracking-tighter">
               {logoInitials}
             </span>
           </div>
-          <div>
-            <h3 className="text-sm font-semibold text-white truncate max-w-[170px]">
+          <div className="min-w-0">
+            <h3 className="text-base font-bold text-white truncate pr-2">
               {name}
             </h3>
-            <p className="text-xs text-slate-500 truncate max-w-[170px]">
+            <p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">
               {model}
             </p>
           </div>
         </div>
-        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end max-w-[50%]">
+        <div className="flex flex-col items-end gap-2 shrink-0">
+          <div
+            className={`inline-flex items-center px-2.5 py-1 rounded-full border text-[10px] font-bold uppercase tracking-wider ${config.badgeClasses} shadow-sm`}
+          >
+            {config.showPulse && (
+              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-2 animate-pulse shadow-[0_0_8px_rgba(16,185,129,0.8)]"></span>
+            )}
+            {config.label}
+          </div>
           {isActive && (
-            <span className="inline-flex items-center px-2 py-1 rounded-md border border-primary/40 bg-primary/10 text-[10px] font-semibold text-primary uppercase tracking-wider shadow-[0_0_12px_rgba(139,92,246,0.35)]">
-              <span className="material-symbols-outlined text-xs mr-1">
-                check_circle
+            <span className="inline-flex items-center px-2.5 py-1 rounded-full border border-primary/40 bg-primary/20 text-[9px] font-bold text-primary-light uppercase tracking-widest shadow-[0_0_15px_rgba(139,92,246,0.2)]">
+              <span className="material-symbols-outlined text-[12px] mr-1">
+                verified
               </span>
               Active
             </span>
           )}
-          <div
-            className={`inline-flex items-center px-2 py-1 rounded-md border text-[10px] font-medium uppercase tracking-wider ${config.badgeClasses}`}
-          >
-            {config.showPulse && (
-              <span className="w-1.5 h-1.5 rounded-full bg-emerald-500 mr-1.5 animate-pulse"></span>
-            )}
-            {config.label}
-          </div>
         </div>
       </div>
 
-      <div className="space-y-2 mt-4">
-        <div className="flex justify-between text-xs">
-          <span className="text-slate-500">Latency</span>
+      <div className="mt-6 space-y-3">
+        <div className="flex justify-between items-center bg-slate-800/20 rounded-lg px-3 py-2 border border-slate-700/30">
+          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+            Latency
+          </span>
           <span
-            className={status === "error" ? "text-red-400" : "text-slate-300"}
+            className={`text-xs font-mono font-bold ${status === "error" ? "text-red-400" : "text-slate-200"}`}
           >
             {status === "error"
-              ? errorMessage || "Timeout"
+              ? "Timeout"
               : hasLatency
                 ? `${latency}ms`
                 : "--"}
           </span>
         </div>
-        <div className="w-full bg-slate-800 rounded-full h-1">
-          {status !== "inactive" && hasLatency && (
+        <div className="w-full bg-slate-800/50 rounded-full h-1.5 overflow-hidden">
+          {status !== "inactive" && (
             <div
-              className={`${config.barColor} h-1 rounded-full transition-all duration-300 ${
-                status === "connected"
-                  ? "shadow-[0_0_8px_rgba(16,185,129,0.5)]"
-                  : ""
-              }`}
+              className={`${config.barColor} h-full rounded-full transition-all duration-700 ease-out shadow-[0_0_10px_rgba(16,185,129,0.3)]`}
               style={{
-                width: status === "error" ? "100%" : `${latencyPercentage}%`,
+                width:
+                  status === "error"
+                    ? "100%"
+                    : hasLatency
+                      ? `${latencyPercentage}%`
+                      : "0%",
               }}
             ></div>
           )}
         </div>
       </div>
 
-      <div className="mt-4 pt-4 border-t border-slate-800 flex justify-between items-center gap-2 opacity-60 group-hover:opacity-100 transition-opacity flex-wrap">
-        {onSetActive && (
-          <button
-            onClick={() => onSetActive(id)}
-            disabled={
-              isActive ||
-              isSettingActive ||
-              setActiveInProgress ||
-              status !== "connected"
-            }
-            className={`inline-flex items-center gap-1 px-3 py-2 rounded-lg text-xs font-medium border transition-all ${
-              isActive
-                ? "border-primary/50 bg-primary/10 text-primary cursor-default"
-                : status !== "connected"
-                  ? "border-slate-700 bg-slate-800/60 text-slate-500 cursor-not-allowed"
-                  : "border-slate-700 bg-slate-800 text-slate-200 hover:border-primary/60 hover:text-white"
-            } disabled:opacity-70 disabled:cursor-not-allowed`}
-            aria-label={`Set ${name} as active`}
-            title={
-              status !== "connected"
-                ? "Connect and test before setting active."
-                : isActive
-                  ? "Already active"
-                  : "Set Active"
-            }
-          >
-            {isSettingActive ? (
-              <span className="w-4 h-4 border border-primary border-t-transparent rounded-full animate-spin"></span>
-            ) : (
-              <span className="material-symbols-outlined text-sm">
-                radio_button_unchecked
-              </span>
-            )}
-            <span>{isActive ? "Active" : "Set Active"}</span>
-          </button>
-        )}
+      {status === "error" && errorMessage && (
+        <div className="mt-3 text-[10px] text-red-400/80 bg-red-500/5 border border-red-500/10 rounded-lg p-2 flex items-start gap-2 animate-in fade-in slide-in-from-top-1 duration-300">
+          <span className="material-symbols-outlined text-sm shrink-0">
+            info
+          </span>
+          <span className="line-clamp-2">{errorMessage}</span>
+        </div>
+      )}
 
-        {onTest && (
+      <div className="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center gap-3">
+        <div className="flex-1">
+          {onSetActive && (
+            <button
+              onClick={() => onSetActive(id)}
+              disabled={
+                isActive ||
+                isSettingActive ||
+                setActiveInProgress ||
+                status !== "connected"
+              }
+              className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
+                isActive
+                  ? "bg-primary/20 text-primary-light border border-primary/30 cursor-default"
+                  : status !== "connected"
+                    ? "bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed"
+                    : "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-primary/50 shadow-sm"
+              } disabled:opacity-50`}
+            >
+              {isSettingActive ? (
+                <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <span className="material-symbols-outlined text-[16px]">
+                  {isActive ? "check_circle" : "radio_button_unchecked"}
+                </span>
+              )}
+              {isActive ? "Default Provider" : "Set As Default"}
+            </button>
+          )}
+        </div>
+
+        <div className="flex items-center gap-1.5">
+          {onRetry && status === "error" && (
+            <button
+              onClick={() => onRetry(id)}
+              className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-700"
+              title="Retry connection"
+            >
+              <span className="material-symbols-outlined text-lg">refresh</span>
+            </button>
+          )}
+
+          {onTest && (
+            <button
+              onClick={() => onTest(id)}
+              disabled={isTesting}
+              className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-all border border-transparent hover:border-emerald-500/20"
+              title="Test connection"
+            >
+              {isTesting ? (
+                <span className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
+              ) : (
+                <span className="material-symbols-outlined text-lg">bolt</span>
+              )}
+            </button>
+          )}
+
           <button
-            onClick={() => onTest(id)}
-            disabled={isTesting}
-            className="p-1.5 text-slate-400 hover:text-emerald-400 hover:bg-slate-700 rounded transition-colors disabled:opacity-60 disabled:cursor-not-allowed"
-            title="Test connection"
+            onClick={() => onEdit(id)}
+            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-700"
+            title="Edit connection"
           >
-            {isTesting ? (
-              <span className="w-4 h-4 border border-emerald-400 border-t-transparent rounded-full animate-spin inline-block"></span>
-            ) : (
-              <span className="material-symbols-outlined text-lg">bolt</span>
-            )}
+            <span className="material-symbols-outlined text-lg">edit</span>
           </button>
-        )}
-        {status === "error" && onRetry && (
+
           <button
-            onClick={() => onRetry(id)}
-            className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
-            title="Retry test"
+            onClick={() => onDelete(id)}
+            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all border border-transparent hover:border-red-500/20"
+            title="Delete connection"
           >
-            <span className="material-symbols-outlined text-lg">refresh</span>
+            <span className="material-symbols-outlined text-lg">delete</span>
           </button>
-        )}
-        <button
-          onClick={() => onEdit(id)}
-          className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-700 rounded transition-colors"
-          title="Edit connection"
-        >
-          <span className="material-symbols-outlined text-lg">edit</span>
-        </button>
-        <button
-          onClick={() => onDelete(id)}
-          className="p-1.5 text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded transition-colors"
-          title="Delete connection"
-        >
-          <span className="material-symbols-outlined text-lg">delete</span>
-        </button>
+        </div>
       </div>
     </div>
   );

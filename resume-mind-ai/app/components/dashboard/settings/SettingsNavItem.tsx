@@ -26,12 +26,14 @@ export default function SettingsNavItem({
           : "text-slate-400 hover:text-slate-200 hover:bg-slate-800/50"
       }`}
     >
-      <div className="flex items-center gap-3">
-        <span className="material-symbols-outlined text-[20px]">{icon}</span>
-        <span>{label}</span>
+      <div className="flex items-center gap-3 min-w-0">
+        <span className="material-symbols-outlined text-[20px] shrink-0">
+          {icon}
+        </span>
+        <span className="truncate">{label}</span>
       </div>
       {badge && (
-        <span className="text-[10px] px-1.5 py-0.5 rounded bg-slate-700 text-slate-500">
+        <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700/50 uppercase font-bold tracking-wider shrink-0 ml-2">
           {badge}
         </span>
       )}

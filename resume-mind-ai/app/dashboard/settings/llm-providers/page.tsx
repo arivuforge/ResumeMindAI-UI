@@ -283,41 +283,51 @@ export default function LLMProvidersPage() {
   }, [supportedProviders]);
 
   return (
-    <div className="space-y-6">
-      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
-        <div>
-          <h2 className="text-xl font-bold text-white tracking-tight">
+    <div className="space-y-8 animate-in fade-in duration-500">
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 pb-6 border-b border-slate-800/50">
+        <div className="space-y-1">
+          <div className="flex items-center gap-2 text-primary-light mb-1">
+            <span className="material-symbols-outlined text-sm">
+              settings_input_component
+            </span>
+            <span className="text-[10px] font-bold uppercase tracking-[0.2em]">
+              Configuration
+            </span>
+          </div>
+          <h2 className="text-3xl font-extrabold text-white tracking-tight">
             Provider Management
           </h2>
-          <p className="text-sm text-slate-400">
-            Configure LLM providers for LiteLLM orchestration.
+          <p className="text-sm text-slate-400 max-w-xl leading-relaxed">
+            Manage and configure LLM providers for unified orchestration.
+            Connect your API keys to get started with seamless model switching.
           </p>
         </div>
         <button
           onClick={handleAddNew}
-          className="inline-flex items-center justify-center px-4 py-2 bg-primary hover:bg-violet-600 text-white text-sm font-medium rounded-lg transition-all shadow-[0_0_15px_rgba(139,92,246,0.25)] hover:shadow-[0_0_20px_rgba(139,92,246,0.4)]"
+          className="group relative inline-flex items-center justify-center px-6 py-3 bg-primary hover:bg-violet-600 text-white text-sm font-bold rounded-xl transition-all shadow-[0_4px_20px_rgba(139,92,246,0.3)] hover:shadow-[0_4px_25px_rgba(139,92,246,0.5)] hover:-translate-y-0.5"
         >
-          <span className="material-symbols-outlined mr-2 text-lg">
-            add_circle
+          <span className="material-symbols-outlined mr-2 text-lg transition-transform group-hover:rotate-90">
+            add
           </span>
           Add New Provider
         </button>
       </div>
 
       {error && (
-        <div className="text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-lg">
+        <div className="flex items-center gap-3 text-sm text-red-400 bg-red-500/10 border border-red-500/20 px-4 py-3 rounded-xl animate-in slide-in-from-top-2 duration-300">
+          <span className="material-symbols-outlined text-lg">error</span>
           {error}
         </div>
       )}
 
       {loading ? (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
             <ProviderCardSkeleton key={i} />
           ))}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-5">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 xl:grid-cols-3 gap-8">
           {providers.map((provider) => (
             <ProviderCard
               key={provider.id}
@@ -342,8 +352,21 @@ export default function LLMProvidersPage() {
             />
           ))}
           {providers.length === 0 && (
-            <div className="text-slate-400 text-sm">
-              No providers yet. Add your first one.
+            <div className="col-span-full py-20 flex flex-col items-center justify-center border-2 border-dashed border-slate-800 rounded-3xl bg-slate-900/20">
+              <div className="w-16 h-16 bg-slate-800/50 rounded-2xl flex items-center justify-center mb-4">
+                <span className="material-symbols-outlined text-3xl text-slate-600">
+                  developer_board
+                </span>
+              </div>
+              <p className="text-slate-400 font-medium">
+                No LLM providers configured yet.
+              </p>
+              <button
+                onClick={handleAddNew}
+                className="mt-4 text-primary font-bold hover:text-primary-light transition-colors"
+              >
+                Connect your first provider
+              </button>
             </div>
           )}
         </div>
