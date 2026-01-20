@@ -79,6 +79,23 @@ export default function ProviderCard({
           : "hover:border-primary/50"
       } ${isActive ? "border-primary-light bg-primary/5 ring-1 ring-primary-light shadow-[0_0_25px_rgba(139,92,246,0.15)]" : "bg-slate-900/40 hover:bg-slate-900/60"}`}
     >
+      {/* Utility Actions (Top Right) */}
+      <div className="absolute top-4 right-4 flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-200 z-10">
+        <button
+          onClick={() => onEdit(id)}
+          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-white bg-slate-800/80 hover:bg-slate-700 rounded-lg transition-all border border-slate-700/50"
+          title="Edit connection"
+        >
+          <span className="material-symbols-outlined text-base">edit</span>
+        </button>
+        <button
+          onClick={() => onDelete(id)}
+          className="w-8 h-8 flex items-center justify-center text-slate-400 hover:text-red-400 bg-slate-800/80 hover:bg-red-500/10 rounded-lg transition-all border border-slate-700/50"
+          title="Delete connection"
+        >
+          <span className="material-symbols-outlined text-base">delete</span>
+        </button>
+      </div>
       <div className="flex justify-between items-start">
         <div className="flex items-center gap-4 min-w-0">
           <div
@@ -119,9 +136,38 @@ export default function ProviderCard({
 
       <div className="mt-6 space-y-3">
         <div className="flex justify-between items-center bg-slate-800/20 rounded-lg px-3 py-2 border border-slate-700/30">
-          <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
-            Latency
-          </span>
+          <div className="flex items-center gap-2">
+            <span className="text-[11px] font-semibold text-slate-400 uppercase tracking-wider">
+              Latency
+            </span>
+            {onTest && (
+              <button
+                onClick={() => onTest(id)}
+                disabled={isTesting}
+                className="text-slate-500 hover:text-emerald-400 disabled:opacity-50 transition-colors"
+                title="Test connection"
+              >
+                {isTesting ? (
+                  <span className="w-3 h-3 border border-emerald-400 border-t-transparent rounded-full animate-spin inline-block"></span>
+                ) : (
+                  <span className="material-symbols-outlined text-sm">
+                    bolt
+                  </span>
+                )}
+              </button>
+            )}
+            {onRetry && status === "error" && (
+              <button
+                onClick={() => onRetry(id)}
+                className="text-slate-500 hover:text-white transition-colors"
+                title="Retry connection"
+              >
+                <span className="material-symbols-outlined text-sm">
+                  refresh
+                </span>
+              </button>
+            )}
+          </div>
           <span
             className={`text-xs font-mono font-bold ${status === "error" ? "text-red-400" : "text-slate-200"}`}
           >
@@ -158,80 +204,35 @@ export default function ProviderCard({
         </div>
       )}
 
-      <div className="mt-6 pt-4 border-t border-slate-800/80 flex justify-between items-center gap-3">
-        <div className="flex-1">
-          {onSetActive && (
-            <button
-              onClick={() => onSetActive(id)}
-              disabled={
-                isActive ||
-                isSettingActive ||
-                setActiveInProgress ||
-                status !== "connected"
-              }
-              className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
-                isActive
-                  ? "bg-primary/20 text-primary-light border border-primary/30 cursor-default"
-                  : status !== "connected"
-                    ? "bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed"
-                    : "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-primary/50 shadow-sm"
-              } disabled:opacity-50`}
-            >
-              {isSettingActive ? (
-                <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
-              ) : (
-                <span className="material-symbols-outlined text-[16px]">
-                  {isActive ? "check_circle" : "radio_button_unchecked"}
-                </span>
-              )}
-              {isActive ? "Default Provider" : "Set As Default"}
-            </button>
-          )}
-        </div>
-
-        <div className="flex items-center gap-1.5">
-          {onRetry && status === "error" && (
-            <button
-              onClick={() => onRetry(id)}
-              className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-700"
-              title="Retry connection"
-            >
-              <span className="material-symbols-outlined text-lg">refresh</span>
-            </button>
-          )}
-
-          {onTest && (
-            <button
-              onClick={() => onTest(id)}
-              disabled={isTesting}
-              className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-emerald-400 hover:bg-emerald-500/10 rounded-xl transition-all border border-transparent hover:border-emerald-500/20"
-              title="Test connection"
-            >
-              {isTesting ? (
-                <span className="w-4 h-4 border-2 border-emerald-400 border-t-transparent rounded-full animate-spin"></span>
-              ) : (
-                <span className="material-symbols-outlined text-lg">bolt</span>
-              )}
-            </button>
-          )}
-
+      {onSetActive && (
+        <div className="mt-6 pt-4 border-t border-slate-800/80">
           <button
-            onClick={() => onEdit(id)}
-            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-white hover:bg-slate-800 rounded-xl transition-all border border-transparent hover:border-slate-700"
-            title="Edit connection"
+            onClick={() => onSetActive(id)}
+            disabled={
+              isActive ||
+              isSettingActive ||
+              setActiveInProgress ||
+              status !== "connected"
+            }
+            className={`w-full inline-flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-[11px] font-bold uppercase tracking-wider transition-all duration-300 ${
+              isActive
+                ? "bg-primary/20 text-primary-light border border-primary/30 cursor-default"
+                : status !== "connected"
+                  ? "bg-slate-800 text-slate-500 border border-slate-700/50 cursor-not-allowed"
+                  : "bg-slate-800 hover:bg-slate-700 text-white border border-slate-700 hover:border-primary/50 shadow-sm"
+            } disabled:opacity-50`}
           >
-            <span className="material-symbols-outlined text-lg">edit</span>
-          </button>
-
-          <button
-            onClick={() => onDelete(id)}
-            className="w-9 h-9 flex items-center justify-center text-slate-400 hover:text-red-400 hover:bg-red-500/10 rounded-xl transition-all border border-transparent hover:border-red-500/20"
-            title="Delete connection"
-          >
-            <span className="material-symbols-outlined text-lg">delete</span>
+            {isSettingActive ? (
+              <span className="w-4 h-4 border-2 border-primary border-t-transparent rounded-full animate-spin"></span>
+            ) : (
+              <span className="material-symbols-outlined text-[16px]">
+                {isActive ? "check_circle" : "radio_button_unchecked"}
+              </span>
+            )}
+            {isActive ? "Default Provider" : "Set As Default"}
           </button>
         </div>
-      </div>
+      )}
     </div>
   );
 }
