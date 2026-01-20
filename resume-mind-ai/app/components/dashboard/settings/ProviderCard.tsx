@@ -80,7 +80,7 @@ export default function ProviderCard({
       } ${isActive ? "border-primary/60 shadow-[0_0_20px_rgba(139,92,246,0.35)]" : ""}`}
     >
       <div className="flex justify-between items-start mb-4">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 min-w-0">
           <div
             className={`w-10 h-10 rounded-lg ${logoColorClass} flex items-center justify-center border border-current/20`}
           >
@@ -89,11 +89,15 @@ export default function ProviderCard({
             </span>
           </div>
           <div>
-            <h3 className="text-sm font-semibold text-white">{name}</h3>
-            <p className="text-xs text-slate-500">{model}</p>
+            <h3 className="text-sm font-semibold text-white truncate max-w-[170px]">
+              {name}
+            </h3>
+            <p className="text-xs text-slate-500 truncate max-w-[170px]">
+              {model}
+            </p>
           </div>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 shrink-0 flex-wrap justify-end max-w-[50%]">
           {isActive && (
             <span className="inline-flex items-center px-2 py-1 rounded-md border border-primary/40 bg-primary/10 text-[10px] font-semibold text-primary uppercase tracking-wider shadow-[0_0_12px_rgba(139,92,246,0.35)]">
               <span className="material-symbols-outlined text-xs mr-1">
