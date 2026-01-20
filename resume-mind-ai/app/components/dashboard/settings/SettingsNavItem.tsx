@@ -30,7 +30,9 @@ export default function SettingsNavItem({
         <span className="material-symbols-outlined text-[20px] shrink-0">
           {icon}
         </span>
-        <span className="truncate">{label}</span>
+        <span className="truncate" title={label}>
+          {label}
+        </span>
       </div>
       {badge && (
         <span className="text-[9px] px-1.5 py-0.5 rounded bg-slate-800 text-slate-500 border border-slate-700/50 uppercase font-bold tracking-wider shrink-0">

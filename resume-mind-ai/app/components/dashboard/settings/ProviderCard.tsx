@@ -105,11 +105,17 @@ export default function ProviderCard({
               {logoInitials}
             </span>
           </div>
-          <div className="min-w-0">
-            <h3 className="text-base font-bold text-white truncate pr-2">
+          <div className="min-w-0 flex-1">
+            <h3
+              className="text-base font-bold text-white truncate pr-2 cursor-help"
+              title={name}
+            >
               {name}
             </h3>
-            <p className="text-[11px] font-medium text-slate-500 truncate mt-0.5">
+            <p
+              className="text-[11px] font-medium text-slate-500 truncate mt-0.5 cursor-help"
+              title={model}
+            >
               {model}
             </p>
           </div>
