@@ -86,9 +86,9 @@ const emptyInsights = [
 export default function DashboardContent({ user }: DashboardContentProps) {
   const router = useRouter();
 
-  // Use the useApi hook for data fetching with caching
-  const { data: providers, isLoading } = useApi<ProviderApi[]>(
-    "/settings/llm-providers/",
+  // Fetch the active LLM provider specifically
+  const { data: activeProvider, isLoading } = useApi<ProviderApi>(
+    "/settings/llm-providers/active",
     { revalidateOnFocus: true, dedupingInterval: 5000 },
   );
 
@@ -113,31 +113,22 @@ export default function DashboardContent({ user }: DashboardContentProps) {
     router.push("/dashboard/graph");
   };
 
-  const primaryProvider = useMemo(() => {
-    const providerList = providers || [];
-    if (!providerList.length) return null;
-    const connected = providerList.find((p) => p.status === "connected");
-    if (connected) return connected;
-    const withStatus = providerList.find((p) => p.status !== undefined);
-    return withStatus || providerList[0];
-  }, [providers]);
-
   const pipelineStatus = useMemo(() => {
-    if (!primaryProvider) return "not_configured" as const;
-    if (primaryProvider.status === "connected") return "active" as const;
-    if (primaryProvider.status === "inactive") return "idle" as const;
-    if (primaryProvider.status === "error") return "idle" as const;
+    if (!activeProvider) return "not_configured" as const;
+    if (activeProvider.status === "connected") return "active" as const;
+    if (activeProvider.status === "inactive") return "idle" as const;
+    if (activeProvider.status === "error") return "idle" as const;
     return "idle" as const;
-  }, [primaryProvider]);
+  }, [activeProvider]);
 
   const pipelineProviderName = useMemo(() => {
-    if (!primaryProvider) return null;
+    if (!activeProvider) return null;
     return (
-      primaryProvider.display_name ||
-      primaryProvider.name ||
-      primaryProvider.provider_type
+      activeProvider.display_name ||
+      activeProvider.name ||
+      activeProvider.provider_type
     );
-  }, [primaryProvider]);
+  }, [activeProvider]);
 
   return (
     <DashboardLayout
