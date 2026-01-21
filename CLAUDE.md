@@ -676,6 +676,7 @@ Before submitting code, verify:
 
 - [ ] Component created in appropriate feature folder
 - [ ] TypeScript interfaces defined for all props
+- [ ] Vitest test cases added/updated for new or changed components (prefer colocated __tests__)
 - [ ] Uses existing color variables from the catalog
 - [ ] Follows Tailwind utility-first approach
 - [ ] Responsive breakpoints added (`sm:`, `md:`, `lg:`)

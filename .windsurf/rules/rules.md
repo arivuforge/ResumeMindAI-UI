@@ -528,6 +528,14 @@ import Image from 'next/image';
 
 ---
 
+## ✅ Testing
+
+- Use Vitest; add/refresh tests for any new or modified components.
+- Prefer colocated __tests__ folders.
+- Run `npm run test:coverage` before merging.
+
+---
+
 ## 🚫 Prohibited Actions
 
 **DO NOT:**
@@ -564,6 +572,9 @@ import Image from 'next/image';
 - [ ] Colors match palette (purple, emerald, blue, orange, slate)
 - [ ] Glass-card class for cards
 - [ ] Consistent spacing (`py-20`, `gap-8`)
+- [ ] Vitest tests added/updated for any new or changed components (prefer colocated __tests__, run `npm run test:coverage`)
+- [ ] ESLint passes (run `npm run lint:fix`)
+- [ ] Prettier passes (run `npm run format`)
 
 ---
 
@@ -675,6 +686,10 @@ npm run dev     # Development server
 npm run build   # Production build
 npm start       # Production server
 npm run lint    # ESLint
+npm run lint:fix  # ESLint fix
+npm run format  # Prettier
+npm run test    # Vitest
+npm run test:coverage  # Vitest with coverage
 ```
 
 ---
