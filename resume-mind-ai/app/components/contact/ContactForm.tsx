@@ -20,6 +20,8 @@ export default function ContactForm() {
     e.preventDefault();
     if (isSubmitting) return;
 
+    const formElement = e.currentTarget;
+
     setIsSubmitting(true);
     if (!WEB3FORMS_KEY) {
       setResult("Missing form configuration. Please try again later.");
@@ -29,7 +31,7 @@ export default function ContactForm() {
 
     setResult("Sending...");
 
-    const formData = new FormData(e.currentTarget);
+    const formData = new FormData(formElement);
     formData.append("access_key", WEB3FORMS_KEY);
 
     try {
@@ -54,7 +56,7 @@ export default function ContactForm() {
 
       if (wasSuccess) {
         setResult(data?.message ?? "Form submitted successfully");
-        e.currentTarget.reset();
+        formElement.reset();
       } else {
         setResult(data?.message ?? "Error sending message");
       }
