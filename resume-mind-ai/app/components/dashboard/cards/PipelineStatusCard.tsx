@@ -104,7 +104,9 @@ export default function PipelineStatusCard({
         </div>
         <p className="text-sm text-slate-400">
           LLM Provider:{" "}
-          <span className="text-primary font-medium">{llmProvider}</span>
+          <span className="text-primary font-medium">
+            {llmProvider?.toUpperCase()}
+          </span>
         </p>
       </div>
 
