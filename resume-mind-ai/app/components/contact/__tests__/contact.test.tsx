@@ -1,18 +1,37 @@
-import { render, screen } from "@testing-library/react";
+import { render, screen, cleanup } from "@testing-library/react";
 import userEvent from "@testing-library/user-event";
 import ContactInfo from "../ContactInfo";
 
 const originalEnv = { ...process.env };
 
+// Mock clipboard API
+const mockClipboard = {
+  writeText: vi.fn(),
+  readText: vi.fn().mockResolvedValue(""),
+};
+
 describe("Contact components", () => {
+  let user: ReturnType<typeof userEvent.setup>;
+
   beforeEach(() => {
     vi.restoreAllMocks();
     vi.resetModules();
     process.env = { ...originalEnv };
+    cleanup();
+
+    // Setup fresh user event for each test
+    user = userEvent.setup();
+
+    // Mock clipboard API
+    Object.defineProperty(navigator, "clipboard", {
+      value: mockClipboard,
+      writable: true,
+    });
   });
 
   afterEach(() => {
     vi.unstubAllGlobals();
+    cleanup();
   });
 
   afterAll(() => {
@@ -44,7 +63,6 @@ describe("Contact components", () => {
 
   describe("ContactForm", () => {
     const fillForm = async () => {
-      const user = userEvent.setup();
       await user.type(screen.getByLabelText(/Name/i), "Jane Doe");
       await user.type(screen.getByLabelText(/Work Email/i), "jane@company.com");
       await user.type(screen.getByLabelText(/Subject/i), "Hello");
@@ -58,9 +76,7 @@ describe("Contact components", () => {
 
       await fillForm();
 
-      await userEvent.click(
-        screen.getByRole("button", { name: /Send Message/i }),
-      );
+      await user.click(screen.getByRole("button", { name: /Send Message/i }));
 
       expect(
         await screen.findByText(
@@ -76,9 +92,7 @@ describe("Contact components", () => {
 
       await fillForm();
 
-      await userEvent.click(
-        screen.getByRole("button", { name: /Send Message/i }),
-      );
+      await user.click(screen.getByRole("button", { name: /Send Message/i }));
 
       expect(
         await screen.findByText(
@@ -99,19 +113,13 @@ describe("Contact components", () => {
       // Stub fetch before rendering to avoid any real network calls
       const fetchSpy = vi.fn().mockResolvedValue(mockResponse);
       vi.stubGlobal("fetch", fetchSpy);
-      // jsdom sometimes reads fetch from window; align both
-      (globalThis as unknown as { window?: { fetch?: typeof fetch } }).window =
-        {
-          ...globalThis.window,
-          fetch: fetchSpy as unknown as typeof fetch,
-        };
 
       const { default: ContactForm } = await import("../ContactForm");
 
       const { getByRole, findByText } = render(<ContactForm />);
       await fillForm();
 
-      await userEvent.click(getByRole("button", { name: /Send Message/i }));
+      await user.click(getByRole("button", { name: /Send Message/i }));
 
       expect(
         await findByText(/Form submitted successfully|OK/i),
@@ -221,17 +229,12 @@ describe("Contact components", () => {
 
       const fetchSpy = vi.fn().mockResolvedValue(mockResponse);
       vi.stubGlobal("fetch", fetchSpy);
-      (globalThis as unknown as { window?: { fetch?: typeof fetch } }).window =
-        {
-          ...globalThis.window,
-          fetch: fetchSpy as unknown as typeof fetch,
-        };
 
       const { default: ContactForm } = await import("../ContactForm");
       const { getByRole, findByText } = render(<ContactForm />);
       await fillForm();
 
-      await userEvent.click(getByRole("button", { name: /Send Message/i }));
+      await user.click(getByRole("button", { name: /Send Message/i }));
 
       expect(
         await findByText(/Form submitted successfully/i),
