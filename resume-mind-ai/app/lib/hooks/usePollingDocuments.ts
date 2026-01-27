@@ -24,6 +24,8 @@ interface PollingEntry {
   startTime: number;
   intervalId: ReturnType<typeof setInterval>;
   currentInterval: number;
+  lastPollTime: number;
+  consecutiveErrors: number;
 }
 
 /**
@@ -35,10 +37,10 @@ export function usePollingDocuments(options: UsePollingDocumentsOptions): void {
   const {
     documents,
     onStatusUpdate,
-    initialInterval = 2000,
-    backoffInterval = 4000,
-    backoffAfter = 30000,
-    maxDuration = 120000,
+    initialInterval = 5000, // Increased from 2000ms to 5000ms
+    backoffInterval = 10000, // Increased from 4000ms to 10000ms
+    backoffAfter = 60000, // Increased from 30000ms to 60000ms
+    maxDuration = 300000, // Increased from 120000ms to 300000ms (5 minutes)
     enabled = true,
   } = options;
 
@@ -92,8 +94,24 @@ export function usePollingDocuments(options: UsePollingDocumentsOptions): void {
           });
         }
 
+        // Rate limiting: don't poll if less than 1 second since last poll
+        const timeSinceLastPoll = Date.now() - entry.lastPollTime;
+        if (timeSinceLastPoll < 1000) {
+          return;
+        }
+
         try {
           const response = await getDocumentStatus(id);
+
+          // Update last poll time
+          const currentEntry = pollingMapRef.current.get(id);
+          if (currentEntry) {
+            pollingMapRef.current.set(id, {
+              ...currentEntry,
+              lastPollTime: Date.now(),
+              consecutiveErrors: 0, // Reset error count on success
+            });
+          }
 
           if (response.error) {
             stopPolling(id);
@@ -111,8 +129,40 @@ export function usePollingDocuments(options: UsePollingDocumentsOptions): void {
           if (isTerminalStatus(status.status)) {
             stopPolling(id);
           }
-        } catch {
-          stopPolling(id);
+        } catch (error) {
+          // Handle rate limiting (429) and other errors
+          const currentEntry = pollingMapRef.current.get(id);
+          if (currentEntry) {
+            const newErrorCount = currentEntry.consecutiveErrors + 1;
+
+            // Stop polling after 3 consecutive errors
+            if (newErrorCount >= 3) {
+              stopPolling(id);
+              return;
+            }
+
+            // Update error count and apply exponential backoff
+            pollingMapRef.current.set(id, {
+              ...currentEntry,
+              consecutiveErrors: newErrorCount,
+              lastPollTime: Date.now(),
+            });
+
+            // If it's a 429 error, wait longer before next poll
+            if (error && (error as { status?: number }).status === 429) {
+              clearInterval(currentEntry.intervalId);
+              const backoffTime = Math.min(
+                30000,
+                1000 * Math.pow(2, newErrorCount),
+              ); // Max 30 seconds
+              const newIntervalId = setInterval(poll, backoffTime);
+              pollingMapRef.current.set(id, {
+                ...currentEntry,
+                intervalId: newIntervalId,
+                currentInterval: backoffTime,
+              });
+            }
+          }
         }
       };
 
@@ -122,6 +172,8 @@ export function usePollingDocuments(options: UsePollingDocumentsOptions): void {
         startTime,
         intervalId,
         currentInterval: initialInterval,
+        lastPollTime: Date.now(),
+        consecutiveErrors: 0,
       });
 
       // Initial poll immediately
