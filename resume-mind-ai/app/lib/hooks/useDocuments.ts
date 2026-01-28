@@ -18,6 +18,7 @@ interface UseDocumentsOptions {
   initialLimit?: number;
   autoRefresh?: boolean;
   refreshInterval?: number;
+  revalidateOnFocus?: boolean;
 }
 
 interface UseDocumentsReturn {
@@ -43,6 +44,7 @@ export function useDocuments(
     initialLimit = 20,
     autoRefresh = false,
     refreshInterval = 30000,
+    revalidateOnFocus = false,
   } = options;
 
   const [documents, setDocuments] = useState<DocumentListItem[]>([]);
@@ -190,6 +192,19 @@ export function useDocuments(
     const interval = setInterval(() => fetchDocuments(true), refreshInterval);
     return () => clearInterval(interval);
   }, [autoRefresh, refreshInterval, fetchDocuments]);
+
+  // Revalidate on focus
+  useEffect(() => {
+    if (!revalidateOnFocus) return;
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === "visible") {
+        fetchDocuments(true);
+      }
+    };
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+  }, [revalidateOnFocus, fetchDocuments]);
 
   // Cleanup
   useEffect(() => {

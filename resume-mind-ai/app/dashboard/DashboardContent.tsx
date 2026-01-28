@@ -99,8 +99,7 @@ export default function DashboardContent({ user }: DashboardContentProps) {
   const { documents: recentAnalyses, isLoading: isLoadingAnalyses } =
     useDocuments({
       initialLimit: 5,
-      autoRefresh: true,
-      refreshInterval: 10000,
+      revalidateOnFocus: true,
     });
 
   const handleSignOut = async () => {
