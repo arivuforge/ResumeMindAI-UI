@@ -9,7 +9,7 @@ import api from "./client";
 import type { ApiGraphResponse } from "../types/graph";
 
 const DOCUMENTS_BASE = "/documents";
-const USER_GRAPH_BASE = "/api/user/graph";
+const USER_GRAPH_BASE = "/user/graph";
 
 export interface GraphQueryParams {
   types?: string[];
